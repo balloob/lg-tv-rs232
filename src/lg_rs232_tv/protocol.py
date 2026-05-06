@@ -1,4 +1,4 @@
-"""Protocol helpers for lg_tv_rs232.
+"""Protocol helpers for lg_rs232_tv.
 
 LG TV RS232 protocol:
 

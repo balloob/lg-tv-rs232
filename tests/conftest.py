@@ -1,4 +1,4 @@
-"""Shared test fixtures for lg_tv_rs232."""
+"""Shared test fixtures for lg_rs232_tv."""
 
 from __future__ import annotations
 
@@ -8,12 +8,12 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-import lg_tv_rs232
-import lg_tv_rs232.tv as lg_tv_module
-from lg_tv_rs232 import LGTV
+import lg_rs232_tv
+import lg_rs232_tv.tv as lg_tv_module
+from lg_rs232_tv import LGTV
 
 # Speed up tests
-lg_tv_rs232.COMMAND_TIMEOUT = 0.1
+lg_rs232_tv.COMMAND_TIMEOUT = 0.1
 lg_tv_module.COMMAND_TIMEOUT = 0.1
 
 
@@ -98,7 +98,7 @@ async def tv(mock_serial: MockSerialConnection):
         return mock_serial.reader, mock_serial.writer
 
     with patch(
-        "lg_tv_rs232.tv.serialx.open_serial_connection",
+        "lg_rs232_tv.tv.serialx.open_serial_connection",
         side_effect=fake_open,
     ):
         await tv.connect()

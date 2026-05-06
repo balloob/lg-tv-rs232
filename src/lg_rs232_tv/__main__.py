@@ -1,12 +1,12 @@
 """CLI to test an LG TV over RS232.
 
 Usage:
-    python -m lg_tv_rs232 /dev/ttyUSB0
-    python -m lg_tv_rs232 socket://192.168.1.29:5000
-    python -m lg_tv_rs232 'esphome://192.168.1.29/?port_name=TTL'
-    python -m lg_tv_rs232 /dev/ttyUSB0 --set-id 2
-    python -m lg_tv_rs232 /dev/ttyUSB0 --power on
-    python -m lg_tv_rs232 service-menu              # webOS service menu (needs [remote] extra)
+    python -m lg_rs232_tv /dev/ttyUSB0
+    python -m lg_rs232_tv socket://192.168.1.29:5000
+    python -m lg_rs232_tv 'esphome://192.168.1.29/?port_name=TTL'
+    python -m lg_rs232_tv /dev/ttyUSB0 --set-id 2
+    python -m lg_rs232_tv /dev/ttyUSB0 --power on
+    python -m lg_rs232_tv service-menu              # webOS service menu (needs [remote] extra)
 """
 
 from __future__ import annotations
@@ -251,7 +251,7 @@ def main() -> None:
                 file=sys.stderr,
             )
             sys.exit(1)
-        sys.exit(remote_main(sys.argv[2:], prog="python -m lg_tv_rs232 service-menu"))
+        sys.exit(remote_main(sys.argv[2:], prog="python -m lg_rs232_tv service-menu"))
 
     parser = argparse.ArgumentParser(
         description="Test an LG TV over RS232",

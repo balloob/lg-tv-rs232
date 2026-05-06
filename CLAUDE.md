@@ -5,13 +5,13 @@ Async Python library to control LG TVs over RS232 serial.
 ## Project structure
 
 ```
-src/lg_tv_rs232/
+src/lg_rs232_tv/
   __init__.py    -- Re-exports public API
   const.py       -- BAUD_RATE, COMMAND_TIMEOUT, enums (InputSource, AspectRatio, ...)
   protocol.py    -- encode_command, parse_response, percent <-> hex helpers
   state.py       -- TVState dataclass
   tv.py          -- LGTV controller (connect / query / set / subscribe)
-  __main__.py    -- CLI: python -m lg_tv_rs232 PORT [--power on|off|...] [--diagnose]
+  __main__.py    -- CLI: python -m lg_rs232_tv PORT [--power on|off|...] [--diagnose]
 
 tests/
   conftest.py        -- MockSerialConnection fixture, DEFAULT_RESPONSES

@@ -29,7 +29,7 @@ esphome = ["serialx[esphome]>=0.8.0"]
 remote = ["aiowebostv>=0.7.4"]
 
 [project.scripts]
-lg-rs232-tv = "lg_tv_rs232.__main__:main"
+lg-rs232-tv = "lg_rs232_tv.__main__:main"
 
 [project.urls]
 Repository = "https://github.com/home-assistant-libs/lg-rs232-tv"

@@ -18,7 +18,7 @@ Requires Python 3.12+.
 
 ```python
 import asyncio
-from lg_tv_rs232 import LGTV, InputSource
+from lg_rs232_tv import LGTV, InputSource
 
 async def main():
     tv = LGTV("/dev/ttyUSB0")
@@ -43,25 +43,25 @@ A built-in CLI lets you quickly test your serial connection:
 
 ```bash
 # Query and print TV status
-python -m lg_tv_rs232 /dev/ttyUSB0
+python -m lg_rs232_tv /dev/ttyUSB0
 
 # Talk to a TV via an ESPHome serial proxy ("TTL" port)
-python -m lg_tv_rs232 'esphome://192.168.1.29/?port_name=TTL'
+python -m lg_rs232_tv 'esphome://192.168.1.29/?port_name=TTL'
 
 # Talk to a TV over a raw TCP socket (e.g. ser2net)
-python -m lg_tv_rs232 socket://192.168.1.29:5000
+python -m lg_rs232_tv socket://192.168.1.29:5000
 
 # Single-shot actions
-python -m lg_tv_rs232 /dev/ttyUSB0 --power on
-python -m lg_tv_rs232 /dev/ttyUSB0 --power off
-python -m lg_tv_rs232 /dev/ttyUSB0 --input HDMI2
-python -m lg_tv_rs232 /dev/ttyUSB0 --volume 30
-python -m lg_tv_rs232 /dev/ttyUSB0 --mute on
-python -m lg_tv_rs232 /dev/ttyUSB0 --aspect R_16_9
-python -m lg_tv_rs232 /dev/ttyUSB0 --key MENU
+python -m lg_rs232_tv /dev/ttyUSB0 --power on
+python -m lg_rs232_tv /dev/ttyUSB0 --power off
+python -m lg_rs232_tv /dev/ttyUSB0 --input HDMI2
+python -m lg_rs232_tv /dev/ttyUSB0 --volume 30
+python -m lg_rs232_tv /dev/ttyUSB0 --mute on
+python -m lg_rs232_tv /dev/ttyUSB0 --aspect R_16_9
+python -m lg_rs232_tv /dev/ttyUSB0 --key MENU
 
 # Use a non-default set ID (when daisy-chaining multiple sets)
-python -m lg_tv_rs232 /dev/ttyUSB0 --set-id 2
+python -m lg_rs232_tv /dev/ttyUSB0 --set-id 2
 ```
 
 ## Features
@@ -119,7 +119,7 @@ power = await tv.query_power()  # PowerState.ON / PowerState.OFF
 ### Input source
 
 ```python
-from lg_tv_rs232 import InputSource, LegacyInputSource
+from lg_rs232_tv import InputSource, LegacyInputSource
 
 # Modern xb command (~2010+)
 await tv.select_input_source(InputSource.HDMI1)
@@ -166,7 +166,7 @@ await tv.set_balance(50)
 ### Modes
 
 ```python
-from lg_tv_rs232 import (
+from lg_rs232_tv import (
     AspectRatio, ColorTemperature, EnergySaving, PictureMode, SoundMode
 )
 
@@ -180,7 +180,7 @@ await tv.set_sound_mode(SoundMode.MUSIC)
 ### Screen mute / OSD / remote lock
 
 ```python
-from lg_tv_rs232 import ScreenMute
+from lg_rs232_tv import ScreenMute
 
 await tv.set_screen_mute(ScreenMute.SCREEN_ON)  # picture off, audio on
 await tv.set_screen_mute(ScreenMute.OFF)        # back to normal
@@ -197,7 +197,7 @@ await tv.remote_lock_off()
 Send any IR remote key code over RS232 with the `mc` command:
 
 ```python
-from lg_tv_rs232 import RemoteKey
+from lg_rs232_tv import RemoteKey
 
 await tv.send_remote_key(RemoteKey.MENU)
 await tv.send_remote_key(RemoteKey.HOME)
@@ -212,7 +212,7 @@ await tv.send_remote_key_code(0x08)   # arbitrary hex code
 - Commands return a `Response`; an NG (not-good) acknowledgement raises `CommandRejected`.
 
 ```python
-from lg_tv_rs232 import CommandRejected
+from lg_rs232_tv import CommandRejected
 
 try:
     await tv.connect()

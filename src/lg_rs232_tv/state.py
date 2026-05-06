@@ -1,4 +1,4 @@
-"""Runtime state dataclasses for lg_tv_rs232."""
+"""Runtime state dataclasses for lg_rs232_tv."""
 
 from __future__ import annotations
 

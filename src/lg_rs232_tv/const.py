@@ -1,4 +1,4 @@
-"""Constants and enums shared across the lg_tv_rs232 package."""
+"""Constants and enums shared across the lg_rs232_tv package."""
 
 from enum import Enum
 

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from lg_tv_rs232 import (
+from lg_rs232_tv import (
     AspectRatio,
     InputSource,
     PowerState,

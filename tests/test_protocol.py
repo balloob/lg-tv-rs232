@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from lg_tv_rs232 import (
+from lg_rs232_tv import (
     CommandRejected,
     ProtocolError,
     Response,

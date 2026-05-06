@@ -10,9 +10,9 @@ access code is 0413.
 
 CLI usage::
 
-    python -m lg_tv_rs232 service-menu                  # auto-discover, InStart
-    python -m lg_tv_rs232 service-menu 192.168.1.42
-    python -m lg_tv_rs232 service-menu --menu ezAdjust  # service menu 1
+    python -m lg_rs232_tv service-menu                  # auto-discover, InStart
+    python -m lg_rs232_tv service-menu 192.168.1.42
+    python -m lg_rs232_tv service-menu --menu ezAdjust  # service menu 1
 """
 
 from __future__ import annotations
