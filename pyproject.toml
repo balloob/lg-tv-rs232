@@ -1,5 +1,5 @@
 [project]
-name = "lg-tv-rs232"
+name = "lg-rs232-tv"
 version = "0.0.0"
 description = "Async library to control LG TVs over RS232"
 readme = "README.md"
@@ -29,10 +29,10 @@ esphome = ["serialx[esphome]>=0.8.0"]
 remote = ["aiowebostv>=0.7.4"]
 
 [project.scripts]
-lg-tv-rs232 = "lg_tv_rs232.__main__:main"
+lg-rs232-tv = "lg_tv_rs232.__main__:main"
 
 [project.urls]
-Repository = "https://github.com/home-assistant-libs/lg-tv-rs232"
+Repository = "https://github.com/home-assistant-libs/lg-rs232-tv"
 
 [build-system]
 requires = ["uv_build>=0.8.4,<0.9.0"]
