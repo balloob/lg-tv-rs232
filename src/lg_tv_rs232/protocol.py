@@ -25,11 +25,16 @@ class ProtocolError(Exception):
     """Raised when a malformed response is received from the TV."""
 
 
-class CommandError(Exception):
-    """Raised when the TV returns an NG (not-good) acknowledgement."""
+class CommandRejected(Exception):
+    """Raised when the TV rejects a command with an NG (not-good) acknowledgement.
+
+    LG TVs return NG when a command is not supported by the current model or
+    configuration (e.g. volume/mute when audio is routed to optical out), or
+    when the data byte is invalid for the command.
+    """
 
     def __init__(self, command2: str, data: str) -> None:
-        super().__init__(f"TV returned NG for command '{command2}': data={data!r}")
+        super().__init__(f"TV rejected command '{command2}' (NG, data={data!r})")
         self.command2 = command2
         self.data = data
 
@@ -50,7 +55,7 @@ class Response:
 
     def raise_for_status(self) -> None:
         if not self.ok:
-            raise CommandError(self.command2, self.data)
+            raise CommandRejected(self.command2, self.data)
 
 
 def encode_command(command1: str, command2: str, set_id: int, data: str) -> bytes:

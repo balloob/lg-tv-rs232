@@ -211,10 +211,10 @@ await tv.send_remote_key_code(0x08)   # arbitrary hex code
 
 - If the TV doesn't respond during `connect()`, a `ConnectionError` is raised.
 - If the serial connection is lost, subscribers receive `None` and `connected` becomes `False`.
-- Commands return a `Response`; an NG (not-good) acknowledgement raises `CommandError`.
+- Commands return a `Response`; an NG (not-good) acknowledgement raises `CommandRejected`.
 
 ```python
-from lg_tv_rs232 import CommandError
+from lg_tv_rs232 import CommandRejected
 
 try:
     await tv.connect()
@@ -223,7 +223,7 @@ except ConnectionError:
 
 try:
     await tv.set_volume(50)
-except CommandError as err:
+except CommandRejected as err:
     print(f"TV rejected command: {err}")
 ```
 

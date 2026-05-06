@@ -18,7 +18,7 @@ import sys
 from . import (
     DEFAULT_SET_ID,
     AspectRatio,
-    CommandError,
+    CommandRejected,
     InputSource,
     LGTV,
     PowerState,
@@ -141,84 +141,94 @@ async def _run(args: argparse.Namespace) -> int:
         return 1
 
     try:
-        if args.power == "on":
-            print("Sending power on...")
-            await tv.power_on()
-            return 0
-        if args.power == "off":
-            print("Sending power off...")
-            await tv.power_off()
-            return 0
-        if args.input is not None:
-            try:
-                source = InputSource[args.input.upper()]
-            except KeyError:
-                print(
-                    f"Unknown input source: {args.input!r}. "
-                    f"Choices: {', '.join(s.name for s in InputSource)}",
-                    file=sys.stderr,
-                )
-                return 1
-            print(f"Selecting input {source.name}...")
-            await tv.select_input_source(source)
-            return 0
-        if args.volume is not None:
-            print(f"Setting volume to {args.volume}%...")
-            await tv.set_volume(args.volume)
-            return 0
-        if args.mute == "on":
-            print("Muting...")
-            await tv.mute_on()
-            return 0
-        if args.mute == "off":
-            print("Unmuting...")
-            await tv.mute_off()
-            return 0
-        if args.aspect is not None:
-            try:
-                ratio = AspectRatio[args.aspect.upper()]
-            except KeyError:
-                print(
-                    f"Unknown aspect ratio: {args.aspect!r}. "
-                    f"Choices: {', '.join(r.name for r in AspectRatio)}",
-                    file=sys.stderr,
-                )
-                return 1
-            print(f"Setting aspect ratio {ratio.name}...")
-            await tv.set_aspect_ratio(ratio)
-            return 0
-        if args.key is not None:
-            try:
-                key = RemoteKey[args.key.upper()]
-            except KeyError:
-                print(
-                    f"Unknown remote key: {args.key!r}. "
-                    f"Choices: {', '.join(k.name for k in RemoteKey)}",
-                    file=sys.stderr,
-                )
-                return 1
-            print(f"Sending remote key {key.name}...")
-            await tv.send_remote_key(key)
-            return 0
-
-        # Default: query everything and print
         try:
-            power = await tv.query_power()
-        except CommandError as err:
-            print(f"Power query failed: {err}", file=sys.stderr)
-            power = None
+            if args.power == "on":
+                print("Sending power on...")
+                await tv.power_on()
+                return 0
+            if args.power == "off":
+                print("Sending power off...")
+                await tv.power_off()
+                return 0
+            if args.input is not None:
+                try:
+                    source = InputSource[args.input.upper()]
+                except KeyError:
+                    print(
+                        f"Unknown input source: {args.input!r}. "
+                        f"Choices: {', '.join(s.name for s in InputSource)}",
+                        file=sys.stderr,
+                    )
+                    return 1
+                print(f"Selecting input {source.name}...")
+                await tv.select_input_source(source)
+                return 0
+            if args.volume is not None:
+                print(f"Setting volume to {args.volume}%...")
+                await tv.set_volume(args.volume)
+                return 0
+            if args.mute == "on":
+                print("Muting...")
+                await tv.mute_on()
+                return 0
+            if args.mute == "off":
+                print("Unmuting...")
+                await tv.mute_off()
+                return 0
+            if args.aspect is not None:
+                try:
+                    ratio = AspectRatio[args.aspect.upper()]
+                except KeyError:
+                    print(
+                        f"Unknown aspect ratio: {args.aspect!r}. "
+                        f"Choices: {', '.join(r.name for r in AspectRatio)}",
+                        file=sys.stderr,
+                    )
+                    return 1
+                print(f"Setting aspect ratio {ratio.name}...")
+                await tv.set_aspect_ratio(ratio)
+                return 0
+            if args.key is not None:
+                try:
+                    key = RemoteKey[args.key.upper()]
+                except KeyError:
+                    print(
+                        f"Unknown remote key: {args.key!r}. "
+                        f"Choices: {', '.join(k.name for k in RemoteKey)}",
+                        file=sys.stderr,
+                    )
+                    return 1
+                print(f"Sending remote key {key.name}...")
+                await tv.send_remote_key(key)
+                return 0
 
-        if power is PowerState.OFF:
-            print()
-            print("TV is OFF — most queries will be skipped (TV does not "
-                  "respond to status queries while in standby).")
+            # Default: query everything and print
+            try:
+                power = await tv.query_power()
+            except CommandRejected as err:
+                print(f"Power query failed: {err}", file=sys.stderr)
+                power = None
+
+            if power is PowerState.OFF:
+                print()
+                print("TV is OFF — most queries will be skipped (TV does not "
+                      "respond to status queries while in standby).")
+                _print_state(tv.state)
+                return 0
+
+            print("Querying TV state...")
+            await tv.query_state()
             _print_state(tv.state)
             return 0
-
-        print("Querying TV state...")
-        await tv.query_state()
-        _print_state(tv.state)
-        return 0
+        except CommandRejected as err:
+            print(
+                f"Warning: TV rejected the command (NG). The command is "
+                f"likely not supported by this model or current configuration "
+                f"(e.g. volume/mute have no effect when audio is routed to "
+                f"optical out). Details: {err}",
+                file=sys.stderr,
+            )
+            return 1
     finally:
         await tv.disconnect()
 

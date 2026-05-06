@@ -41,7 +41,7 @@ tests/
 
 - `set_id` is per-`LGTV` instance (1..99). Set ID 0 is broadcast.
 - Each command method has matching `set_*` and `query_*` (where queryable).
-- `set_*` methods raise `CommandError` on NG; OK responses also update state.
+- `set_*` methods raise `CommandRejected` on NG; OK responses also update state.
 - `subscribe(callback)` notifies on every state change and `None` on disconnect.
 - The CLI's `--diagnose` mode opens the port raw (no `connect()` verify) and
   broadcasts power queries to set IDs 0..99 — useful when the cable wiring or

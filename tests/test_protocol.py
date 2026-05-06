@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from lg_tv_rs232 import (
-    CommandError,
+    CommandRejected,
     ProtocolError,
     Response,
     data_to_percent,
@@ -36,7 +36,7 @@ def test_parse_response_ok() -> None:
 def test_parse_response_ng() -> None:
     resp = parse_response("f 01 NGff")
     assert not resp.ok
-    with pytest.raises(CommandError):
+    with pytest.raises(CommandRejected):
         resp.raise_for_status()
 
 

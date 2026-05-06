@@ -28,7 +28,7 @@ from .const import (
     TileMode,
 )
 from .protocol import (
-    CommandError,
+    CommandRejected,
     PendingCommand,
     ProtocolError,
     Response,
@@ -48,7 +48,7 @@ __all__ = [
     "COMMAND_TIMEOUT",
     "CR",
     "ColorTemperature",
-    "CommandError",
+    "CommandRejected",
     "DEFAULT_SET_ID",
     "EnergySaving",
     "INTER_COMMAND_DELAY",

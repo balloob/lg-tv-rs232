@@ -27,7 +27,7 @@ from .const import (
     SoundMode,
 )
 from .protocol import (
-    CommandError,
+    CommandRejected,
     PendingCommand,
     Response,
     data_to_percent,
@@ -139,7 +139,7 @@ class LGTV:
                 "cable is wired correctly (TX/RX may be swapped), the set "
                 "ID matches, and the baud rate is 9600."
             ) from None
-        except CommandError as err:
+        except CommandRejected as err:
             await self.disconnect()
             raise ConnectionError(
                 f"LG TV on {self._port} responded with NG to power query: {err}"
@@ -164,7 +164,7 @@ class LGTV:
         for command1, command2, _attr in _STATE_QUERIES:
             try:
                 await self._query(command1, command2)
-            except (TimeoutError, CommandError) as err:
+            except (TimeoutError, CommandRejected) as err:
                 _LOGGER.debug(
                     "Skipping %s%s during state query: %s",
                     command1,
@@ -360,7 +360,7 @@ class LGTV:
     # -- Internals ----------------------------------------------------------
 
     async def _send_set(self, command1: str, command2: str, data: str) -> Response:
-        """Send a 'set' command and wait for the ack (or raise CommandError)."""
+        """Send a 'set' command and wait for the ack (or raise CommandRejected)."""
         return await self._send_and_wait(command1, command2, data)
 
     async def _query(self, command1: str, command2: str) -> Response:
