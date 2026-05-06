@@ -126,7 +126,9 @@ def resolve_ip(arg: str | None) -> str:
     print("Discovering LG TVs via SSDP...", file=sys.stderr)
     ips = discover()
     if not ips:
-        print("No LG TV found. Is it powered on and on the same network?", file=sys.stderr)
+        print(
+            "No LG TV found. Is it powered on and on the same network?", file=sys.stderr
+        )
         sys.exit(1)
     if len(ips) == 1:
         print(f"Found TV at {ips[0]}", file=sys.stderr)
@@ -139,7 +141,9 @@ def resolve_ip(arg: str | None) -> str:
 
 def main(argv: list[str] | None = None, prog: str | None = None) -> int:
     parser = argparse.ArgumentParser(prog=prog, description=__doc__)
-    parser.add_argument("ip", nargs="?", help="TV IP address (auto-discover if omitted)")
+    parser.add_argument(
+        "ip", nargs="?", help="TV IP address (auto-discover if omitted)"
+    )
     parser.add_argument(
         "--menu",
         default="inStart",

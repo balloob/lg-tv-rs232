@@ -18,10 +18,10 @@ import sys
 
 from . import (
     DEFAULT_SET_ID,
+    LGTV,
     AspectRatio,
     CommandRejected,
     InputSource,
-    LGTV,
     PowerState,
     RemoteKey,
     TVState,
@@ -118,11 +118,15 @@ async def _diagnose(port: str, set_id: int) -> int:
             pass
 
     if received:
-        print(f"[diag] Got {len(received)} chunks; total {sum(len(c) for c in received)} bytes")
+        print(
+            f"[diag] Got {len(received)} chunks; total {sum(len(c) for c in received)} bytes"
+        )
         return 0
-    print("[diag] Nothing received. Most likely the TV is off, the RX line is "
-          "not connected (try the TX/RX swap switch on the proxy), or the TV's "
-          "RS-232 setting is disabled in its menu.")
+    print(
+        "[diag] Nothing received. Most likely the TV is off, the RX line is "
+        "not connected (try the TX/RX swap switch on the proxy), or the TV's "
+        "RS-232 setting is disabled in its menu."
+    )
     return 1
 
 
@@ -212,8 +216,10 @@ async def _run(args: argparse.Namespace) -> int:
 
             if power is PowerState.OFF:
                 print()
-                print("TV is OFF — most queries will be skipped (TV does not "
-                      "respond to status queries while in standby).")
+                print(
+                    "TV is OFF — most queries will be skipped (TV does not "
+                    "respond to status queries while in standby)."
+                )
                 _print_state(tv.state)
                 return 0
 

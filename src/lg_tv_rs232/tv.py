@@ -473,7 +473,7 @@ class LGTV:
                         buf = buf.split(ACK_TERMINATOR, 1)[1]
                     break
                 message = match.group(0)[:-1].decode("ascii", errors="replace")
-                buf = buf[match.end():]
+                buf = buf[match.end() :]
                 self._handle_message(message)
 
     def _handle_message(self, message: str) -> None:
