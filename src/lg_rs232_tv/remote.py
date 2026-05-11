@@ -38,6 +38,16 @@ SSDP_ST = "urn:lge-com:service:webos-second-screen:1"
 IR_KEYS = ["inStart", "ezAdjust", "powerOnly", "inStop", "pCheck", "sCheck", "tilt"]
 
 
+async def async_discover(timeout: float = 3.0) -> list[str]:
+    """Async variant of :func:`discover`.
+
+    Returns IPs of LG webOS TVs that respond to an SSDP M-SEARCH. Runs the
+    blocking implementation in a worker thread so callers don't stall the
+    event loop.
+    """
+    return await asyncio.to_thread(discover, timeout)
+
+
 def discover(timeout: float = 3.0) -> list[str]:
     """Return IPs of LG webOS TVs that respond to an SSDP M-SEARCH."""
     msg = (

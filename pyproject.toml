@@ -1,6 +1,6 @@
 [project]
 name = "lg-rs232-tv"
-version = "0.0.0"
+version = "1.1.0"
 description = "Async library to control LG TVs over RS232"
 readme = "README.md"
 license = "MIT"
