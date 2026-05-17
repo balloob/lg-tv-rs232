@@ -76,3 +76,22 @@ async def test_query_power_off(tv, mock_serial) -> None:
     power = await tv.query_power()
     assert power is PowerState.OFF
     assert tv.state.power is PowerState.OFF
+
+
+async def test_query_only_queries_requested_attributes(tv, mock_serial) -> None:
+    mock_serial.written.clear()
+    await tv.query(["volume", "input_source"])
+    sent = [w.decode("ascii").rstrip("\r") for w in mock_serial.written]
+    assert "kf 01 ff" in sent  # volume queried
+    assert "xb 01 ff" in sent  # input source queried
+    assert "kc 01 ff" not in sent  # aspect ratio not requested
+    assert tv.state.volume == 30
+
+
+async def test_query_notifies_subscribers_once(tv, mock_serial) -> None:
+    received: list = []
+    tv.subscribe(received.append)
+    await tv.query(["volume", "input_source", "aspect_ratio"])
+    assert len(received) == 1  # one batched notification, not one per attribute
+    await tv.query(["volume", "input_source", "aspect_ratio"])
+    assert len(received) == 1  # nothing changed, so no extra notification

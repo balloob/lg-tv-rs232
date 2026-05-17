@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import re
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 
 import serialx
 
@@ -74,6 +74,11 @@ _STATE_QUERIES: tuple[tuple[str, str, str], ...] = (
     ("d", "y", "sound_mode"),
 )
 
+# State attribute names that can be passed to ``LGTV.query()``.
+QUERYABLE_ATTRIBUTES: frozenset[str] = frozenset(
+    attr for _command1, _command2, attr in _STATE_QUERIES
+)
+
 
 class LGTV:
     """Async controller for an LG TV over RS232.
@@ -98,6 +103,8 @@ class LGTV:
         self._pending: list[PendingCommand] = []
         self._write_lock = asyncio.Lock()
         self._connected = False
+        self._batching = False
+        self._batch_changed = False
 
     @property
     def state(self) -> TVState:
@@ -154,23 +161,43 @@ class LGTV:
 
     # -- Status queries (compound) ------------------------------------------
 
-    async def query_state(self) -> None:
-        """Query every supported attribute and populate ``state``.
+    async def query(self, attributes: Iterable[str]) -> None:
+        """Query the given state attributes, notifying subscribers once.
+
+        ``attributes`` is an iterable of :class:`TVState` field names (the
+        members of :data:`QUERYABLE_ATTRIBUTES`); unknown names are ignored.
+        Subscriber notifications are suppressed while the queries run and
+        fired once at the end if any value changed.
 
         Queries are issued sequentially; each one that times out or returns
         NG is silently skipped (different LG models support different
         subsets of commands).
         """
-        for command1, command2, _attr in _STATE_QUERIES:
-            try:
-                await self._query(command1, command2)
-            except (TimeoutError, CommandRejected) as err:
-                _LOGGER.debug(
-                    "Skipping %s%s during state query: %s",
-                    command1,
-                    command2,
-                    err,
-                )
+        wanted = set(attributes)
+        self._batching = True
+        self._batch_changed = False
+        try:
+            for command1, command2, attr in _STATE_QUERIES:
+                if attr not in wanted:
+                    continue
+                try:
+                    await self._query(command1, command2)
+                except (TimeoutError, CommandRejected) as err:
+                    _LOGGER.debug(
+                        "Skipping %s%s during state query: %s",
+                        command1,
+                        command2,
+                        err,
+                    )
+        finally:
+            self._batching = False
+
+        if self._batch_changed:
+            self._notify_subscribers()
+
+    async def query_state(self) -> None:
+        """Query every supported attribute and populate ``state``."""
+        await self.query(QUERYABLE_ATTRIBUTES)
 
     # -- Power ---------------------------------------------------------------
 
@@ -566,7 +593,10 @@ class LGTV:
             return
 
         if changed:
-            self._notify_subscribers()
+            if self._batching:
+                self._batch_changed = True
+            else:
+                self._notify_subscribers()
 
     @staticmethod
     def _parse_power(data: str) -> PowerState:

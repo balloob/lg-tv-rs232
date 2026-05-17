@@ -39,7 +39,7 @@ from .protocol import (
     percent_to_data,
 )
 from .state import TVState
-from .tv import LGTV, StateCallback
+from .tv import LGTV, QUERYABLE_ATTRIBUTES, StateCallback
 
 __all__ = [
     "ACK_TERMINATOR",
@@ -66,6 +66,7 @@ __all__ = [
     "PictureMode",
     "PowerState",
     "ProtocolError",
+    "QUERYABLE_ATTRIBUTES",
     "RemoteKey",
     "Response",
     "ScreenMute",
